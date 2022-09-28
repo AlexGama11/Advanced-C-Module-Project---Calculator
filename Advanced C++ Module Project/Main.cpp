@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <sstream>
 
 enum class MenuOptions 
 { 
@@ -23,9 +24,31 @@ enum class CalculatorOptions
 //std::string quit;
 //int result{ 0 };
 
+void Check(int& input, std::string errormessage);
+
+void Input(int& inputOne, int& inputTwo, std::string operation);
+
+void Add(int firstInput, int secondInput, int& resultOutput);
+
+void Subtract(int firstInput, int secondInput, int& resultOutput);
+
+void Multiply(int firstInput, int secondInput, int& resultOutput);
+
+void Divide(bool& divideZero, int firstInput, int secondInput, int& resultOutput);
+
+void Modulus(bool& divideZero, int firstInput, int secondInput, int& resultOutput);
+
+void Power(int base, int exponent, int& resultOutput);
+
+void Options(char inputOne, char inputTwo);
+
+void Quit(bool& runningStatus, char& quitchar);
+
+
 int main()
 {
 	bool isCalcRunning = true;
+	bool dividedZero = false;
 
 	int firstInput{ 0 };
 	int secondInput{ 0 };
@@ -42,17 +65,19 @@ int main()
 
 	char quitInput{ };
 
-	std::cout << "----------------------------------------------------------------" << std::endl;
-	std::cout << "|What do you wish to do? [Calculate = 1, Options = 2, Quit = 3]|" << std::endl;
-	std::cout << "----------------------------------------------------------------" << std::endl;
-	std::cin >> menuOption;
-
-	Check(menuOption, "Please input a number between 1 and 3!");
-
-	int optionInput = menuOption;
-
-	switch (MenuOptions(optionInput))
+	while (isCalcRunning)
 	{
+		std::cout << "----------------------------------------------------------------" << std::endl;
+		std::cout << "|What do you wish to do? [Calculate = 1, Options = 2, Quit = 3]|" << std::endl;
+		std::cout << "----------------------------------------------------------------" << std::endl;
+		std::cin >> menuOption;
+
+		Check(menuOption, "Please input a number between 1 and 3!");
+
+		optionInput = menuOption;
+
+		switch (MenuOptions(optionInput))
+		{
 
 		case MenuOptions::Calculate:
 
@@ -63,7 +88,7 @@ int main()
 
 			Check(calculatorMenu, "Please input a number between 1 and 6!");
 
-			int calculatorInput = calculatorMenu;
+			calculatorInput = calculatorMenu;
 
 			switch (CalculatorOptions(calculatorInput))
 			{
@@ -80,7 +105,7 @@ int main()
 				Input(firstInput, secondInput, "subtract");
 
 				Subtract(firstInput, secondInput, result);
-			
+
 				std::cout << "Result is: " << result << std::endl;
 				break;
 
@@ -89,7 +114,7 @@ int main()
 				Input(firstInput, secondInput, "multiply");
 
 				Multiply(firstInput, secondInput, result);
-			
+
 				std::cout << "Result is: " << result << std::endl;
 				break;
 
@@ -97,25 +122,43 @@ int main()
 
 				Input(firstInput, secondInput, "divide");
 
-				Divide(firstInput, secondInput, result);
-			
-				std::cout << "Result is: " << result << std::endl;
-				break;
+				Divide(dividedZero, firstInput, secondInput, result);
+
+				if (dividedZero == false)
+
+				{
+					std::cout << "Result is: " << result << std::endl;
+					break;
+				}
+
+				else
+				{
+					break;
+				}
 
 			case CalculatorOptions::Modulus:
 
 				Input(firstInput, secondInput, "use to get a remainder of a division");
 
-				Modulus(firstInput, secondInput, result);
+				Modulus(dividedZero, firstInput, secondInput, result);
 
-				std::cout << "Result is: " << result << std::endl;
-				break;
+				if (dividedZero == false)
+
+				{
+					std::cout << "Result is: " << result << std::endl;
+					break;
+				}
+
+				else
+				{
+					break;
+				}
 
 			case CalculatorOptions::Power:
 
 				Input(firstInput, secondInput, "use to calculate a power");
 
-				Power(firstInput, secondInput);
+				Power(firstInput, secondInput, result);
 
 				std::cout << "Result is: " << result << std::endl;
 				break;
@@ -128,7 +171,7 @@ int main()
 			break;
 
 		case MenuOptions::Options:
-		
+
 			Options(firstChar, secondChar);
 
 			break;
@@ -144,11 +187,12 @@ int main()
 			std::cout << "Please select an option!" << std::endl;
 			break;
 
-	}
+		}
 
-	if (!isCalcRunning)
-	{
-		return 0;
+		if (!isCalcRunning)
+		{
+			return 0;
+		}
 	}
 
 }
@@ -180,12 +224,7 @@ void Multiply(int firstInput, int secondInput, int& resultOutput)
 	resultOutput = firstInput * secondInput;
 }
 
-void Divide(int firstInput, int secondInput, int& resultOutput)
-{
-	resultOutput = firstInput / secondInput;
-}
-
-void Modulus(int firstInput, int secondInput, int& resultOutput)
+void Divide(bool& divideZero, int firstInput, int secondInput, int& resultOutput)
 {
 
 	if (firstInput == 0)
@@ -193,40 +232,70 @@ void Modulus(int firstInput, int secondInput, int& resultOutput)
 		resultOutput = 0;
 	}
 
-	if (secondInput == 0)
+	else if (secondInput == 0)
 	{
 		std::cout << "---------------------------" << std::endl;
 		std::cout << "|You can't divide by zero!|" << std::endl;
 		std::cout << "---------------------------" << std::endl;
+
+		divideZero = true;
 	}
 
-	resultOutput = firstInput % secondInput;
+	else
+	{
+		resultOutput = firstInput / secondInput;
+	}
+	
+	
 }
 
-void Power(int base, int exponent)  //2 ^ 2 = 4
+void Modulus(bool& divideZero, int firstInput, int secondInput, int& resultOutput)
 {
-	int result = base; //2
+
+	if (firstInput == 0)
+	{
+		resultOutput = 0;
+	}
+
+	else if (secondInput == 0)
+	{
+		std::cout << "---------------------------" << std::endl;
+		std::cout << "|You can't divide by zero!|" << std::endl;
+		std::cout << "---------------------------" << std::endl;
+
+		divideZero = true;
+	}
+
+	else
+	{
+		resultOutput = firstInput % secondInput;
+	}
+}
+
+void Power(int base, int exponent, int& resultOutput)  //2 ^ 2 = 4
+{
+	resultOutput = base; //2
 	
 	if (exponent == 0)
 	{
-		result = 1;
+		resultOutput = 1;
 	}
 
 	else if (exponent == 1)
 	{
-		result = base;
+		resultOutput = base;
 	}
 
 	else if (base == 0)
 	{
-		result = 0;
+		resultOutput = 0;
 	}
 
 	else
 	{
 		for (int i = 0; i < exponent - 1; i++)
 		{
-			result *= base; //8
+			resultOutput *= base; //8
 		}
 	}
 
@@ -277,10 +346,17 @@ void Options(char inputOne, char inputTwo)
 	std::cout << "Choose the letter colour for the calculator." << std::endl;
 	std::cin >> inputTwo;
 
-	std::string colour = "Color" + inputOne + inputTwo;
-	const char* colourChar = colour.c_str();
+	std::stringstream colour;
+
+	colour << "Color " << inputOne << inputTwo;
+
+	std::string colourString = colour.str();
+
+	const char* colourChar = colourString.c_str();
 
 	system(colourChar);
+
+	
 }
 
 void Quit(bool& runningStatus, char& quitchar)
