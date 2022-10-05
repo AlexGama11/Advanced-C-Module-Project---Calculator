@@ -1,6 +1,6 @@
 # Advanced-C-Module-Project---Calculator
 
-Basic C++ 
+Basic C++ Calculator I did for class
 
 ## What's in this project?
 
